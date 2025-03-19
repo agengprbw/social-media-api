@@ -62,67 +62,71 @@ class AuthController extends Controller
         $user->update($request->only(['name', 'email']));
         return response()->json(['message' => 'Profile updated successfully']);
     }
-    public function searchUser(Request $request)
-{
-    $users = User::where('name', 'like', '%' . $request->name . '%')->get();
-    return response()->json($users);
-}
 
-public function getOtherUserProfile($userId)
-{
-    $user = User::find($userId);
-    if (!$user) {
-        return response()->json(['message' => 'User not found'], 404);
-    }
-    return response()->json($user);
-}
-// Get followers
-public function getFollowers($userId)
-{
-    $user = User::find($userId);
-    if (!$user) {
-        return response()->json(['message' => 'User not found'], 404);
+        public function searchUser(Request $request)
+    {
+        $users = User::where('name', 'like', '%' . $request->name . '%')->get();
+        return response()->json($users);
     }
 
-    return response()->json($user->followers);
-}
-
-// Get following
-public function getFollowing($userId)
-{
-    $user = User::find($userId);
-    if (!$user) {
-        return response()->json(['message' => 'User not found'], 404);
+    public function getOtherUserProfile($userId)
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+        return response()->json($user);
     }
 
-    return response()->json($user->following);
-}
-public function followUser($userId, Request $request)
-{
-    $user = $request->user();
-    $userToFollow = User::find($userId);
-    
-    if (!$userToFollow) {
-        return response()->json(['message' => 'User not found'], 404);
+    // Get followers
+    public function getFollowers($userId)
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user->followers);
     }
 
-    // Follow the user
-    $user->following()->attach($userId);
-    return response()->json(['message' => 'User followed successfully']);
-}
-public function unfollowUser($userId, Request $request)
-{
-    $user = $request->user();
-    $userToUnfollow = User::find($userId);
-    
-    if (!$userToUnfollow) {
-        return response()->json(['message' => 'User not found'], 404);
+    // Get following
+    public function getFollowing($userId)
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user->following);
     }
 
-    // Unfollow the user
-    $user->following()->detach($userId);
-    return response()->json(['message' => 'User unfollowed successfully']);
-}
+    public function followUser($userId, Request $request)
+    {
+        $user = $request->user();
+        $userToFollow = User::find($userId);
+        
+        if (!$userToFollow) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Follow the user
+        $user->following()->attach($userId);
+        return response()->json(['message' => 'User followed successfully']);
+    }
+
+    public function unfollowUser($userId, Request $request)
+    {
+        $user = $request->user();
+        $userToUnfollow = User::find($userId);
+        
+        if (!$userToUnfollow) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Unfollow the user
+        $user->following()->detach($userId);
+        return response()->json(['message' => 'User unfollowed successfully']);
+    }
 
 }
 
